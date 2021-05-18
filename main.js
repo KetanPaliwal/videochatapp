@@ -1,6 +1,6 @@
 
 const {PeerServer} = require("peer");
-PeerServer({port: 9000,path: "/"});
+PeerServer({port: 9000,path: "/myapp"});
 
 const express = require("express");
 const app = express();

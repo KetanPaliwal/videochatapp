@@ -1,7 +1,4 @@
 
-const {PeerServer} = require("peer");
-PeerServer({port: 3001,path: "/myapp",secure: true});
-
 const express = require("express");
 const app = express();
 

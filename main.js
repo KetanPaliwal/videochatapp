@@ -1,6 +1,6 @@
 
 const {PeerServer} = require("peer");
-PeerServer({port: 3001,path: "/",secure: true});
+PeerServer({port: 3001,path: "videochatapp-ketan.herokuapp.com",secure: true});
 
 const express = require("express");
 const app = express();

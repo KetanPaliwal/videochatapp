@@ -194,8 +194,9 @@
 	const socket = io();
 	const peer = new Peer(undefined,{
 		host: "/",
-		port: 3001,
-		path: "/"
+		port: 9000,
+		path: "/",
+		secure: true
 	});
 
 	const main = new Vue({

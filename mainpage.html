@@ -299,6 +299,26 @@
 			peer.on("open",(id)=>{
 				this.peerid = id;
 				socket.emit("connected",id);
+				navigator.mediaDevices.getUserMedia({
+					video: true,
+					audio: true
+				})
+				.then((stream)=>{
+					this.getusermedia(stream);
+				})
+				.catch((error)=>{
+					console.log(error);
+					navigator.mediaDevices.getUserMedia({
+						video: false,
+						audio: true
+					})
+					.then((stream)=>{
+						this.getusermedia(stream);
+					})
+					.catch((error)=>{
+						console.log(error);
+					})
+				});
 			});
 
 			socket.on("connected",({online,message})=>{
@@ -310,27 +330,6 @@
 				this.toast(`${peerid} disconnected.`);
 				this.online(online);
 				this.removeVideoChannel(peerid);
-			});
-
-			navigator.mediaDevices.getUserMedia({
-				video: true,
-				audio: true
-			})
-			.then((stream)=>{
-				this.getusermedia(stream);
-			})
-			.catch((error)=>{
-				console.log(error);
-				navigator.mediaDevices.getUserMedia({
-					video: false,
-					audio: true
-				})
-				.then((stream)=>{
-					this.getusermedia(stream);
-				})
-				.catch((error)=>{
-					console.log(error);
-				})
 			});
 
 			socket.on("message",(chat)=>{

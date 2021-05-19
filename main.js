@@ -8,7 +8,13 @@ const server = require("http").createServer(app);
 
 const io = require("socket.io")(server,{cors: {origin: "*"}});
 
-const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure: true});
+port = process.env.PORT || 3000;
+
+const expserver = server.listen(port,()=>{
+	console.log(`Listening on port ${port}.`);
+})
+
+const peerServer = ExpressPeerServer(expserver,{debug: true,path: "/peerjs",secure: true});
 app.use(peerServer);
 
 app.get("/",(req,res)=>{
@@ -38,10 +44,4 @@ io.on("connection",(socket)=>{
 		io.emit("message",{peerid,message,time: `${today.getHours()}:${today.getMinutes()}`})
 	})
 
-})
-
-port = process.env.PORT || 3000;
-
-server.listen(port,()=>{
-	console.log(`Listening on port ${port}.`);
 })

@@ -178,7 +178,7 @@
 		</div>
 		<div id="chatchannel">
 			<div id="chatstream">
-				<div class="chat" v-for="(data,index) in chatchannel" :class="{me: data.peerid==peerid,other: data.peerid!=peerid}">{{ data.message }}<div class="time" :class="{mechat: data.peerid==peerid,otherchat: data.peerid!=peerid}">{{ data.time }}</div></div>
+				<div class="chat" v-for="(data,index) in chatchannel" :class="{me: data.peerid==peerid,other: data.peerid!=peerid}"><div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}">{{ data.peerid }}</div>{{ data.message }}<div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}">{{ data.time }}</div></div>
 			</div>
 			<div id="chatbox">
 				<input type="text" placeholder="Type a message..." v-model="message" @keyup.enter="sendmessage()">

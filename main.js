@@ -10,11 +10,11 @@ const io = require("socket.io")(server,{cors: {origin: "*"}});
 
 port = process.env.PORT || 3000;
 
-const expserver = server.listen(port,()=>{
+server.listen(port,()=>{
 	console.log(`Listening on port ${port}.`);
 })
 
-const peerServer = ExpressPeerServer(expserver,{debug: true,path: "/peerjs",secure: true});
+const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure: true});
 app.use(peerServer);
 
 app.get("/",(req,res)=>{

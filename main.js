@@ -1,6 +1,6 @@
 
-const { PeerServer } = require('peer');
-const peerServer = PeerServer({ port: 9000, path: '/' });
+const { ExpressPeerServer } = require('peer');
+
 
 const express = require("express");
 const app = express();
@@ -8,6 +8,11 @@ const app = express();
 const server = require("http").createServer(app);
 
 const io = require("socket.io")(server,{cors: {origin: "*"}});
+
+
+const peerServer = ExpressPeerServer(server,{ debug: true, path: '/' });
+app.use(peerServer);
+
 
 app.get("/",(req,res)=>{
 	res.sendFile(__dirname+"/mainpage.html");

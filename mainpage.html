@@ -222,6 +222,20 @@
 			},
 			addVideoChannel(peerid,stream,muted){
 				this.videochannel.push({peerid,stream,muted});
+				this.removeduplicates();
+			},
+			removeduplicates(){
+				let tempchannel = [];
+				for(let i=0;i<this.videochannel.length;i++){
+					let tag = true;
+					for(let j=0;j<tempchannel.length;j++){
+						if(this.videochannel[i].peerid==tempchannel[j].peerid)
+							tag=false;
+					}
+					if(tag == true)
+						tempchannel.push(this.videochannel[i]);
+				}
+				this.videochannel = tempchannel;
 			},
 			removeVideoChannel(peerid){
 				for(let i=0;i<this.videochannel.length;i++)

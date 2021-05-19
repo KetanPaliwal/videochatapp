@@ -11,6 +11,7 @@ const io = require("socket.io")(server,{cors: {origin: "*"}});
 
 
 const peerServer = ExpressPeerServer(peerjsserver,{ debug: true, path: '/peerjs' });
+app.use("/peerjs",peerServer);
 
 
 app.get("/",(req,res)=>{

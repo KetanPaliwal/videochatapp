@@ -10,8 +10,7 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server,{cors: {origin: "*"}});
 
 
-const peerServer = ExpressPeerServer(server,{ debug: true, path: '/' });
-app.use(peerServer);
+const peerServer = ExpressPeerServer(peerjsserver,{ debug: true, path: '/peerjs' });
 
 
 app.get("/",(req,res)=>{

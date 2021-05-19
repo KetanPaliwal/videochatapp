@@ -2,22 +2,14 @@
 const { ExpressPeerServer } = require('peer');
 
 const express = require("express");
-const peerapp = express();
-
-const peerserver = require("http").createServer(peerapp);
-
-const peerServer = ExpressPeerServer(peerserver,{ debug:true, path: '/',secure: true });
-app.use("/",peerServer);
-
-peerserver.listen(9000,()=>{
-	console.log(`Peer Server Running on port 9000...`);
-})
-
 const app = express();
 
 const server = require("http").createServer(app);
 
 const io = require("socket.io")(server,{cors: {origin: "*"}});
+
+const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure: true});
+app.use(peerServer);
 
 app.get("/",(req,res)=>{
 	res.sendFile(__dirname+"/mainpage.html");

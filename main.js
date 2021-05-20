@@ -18,7 +18,7 @@ const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure:
 app.use(peerServer);
 
 app.get("/",(req,res)=>{
-	res.sendFile(__dirname+"/main.html");
+	res.sendFile(__dirname+"/mainpage.html");
 })
 
 app.get("/message_tone",(req,res)=>{

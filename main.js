@@ -17,8 +17,16 @@ server.listen(port,()=>{
 const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure: true});
 app.use(peerServer);
 
-app.get("/",(req,res)=>{
-	res.sendFile(__dirname+"/mainpage.html");
+app.get("/message_tone",(req,res)=>{
+	res.sendFile(__dirname+"/incoming_message.mp3");
+})
+
+app.get("/notify_icon",(req,res)=>{
+	res.sendFile(__dirname+"/notify.svg");
+})
+
+app.get("/notnotify_icon",(req,res)=>{
+	res.sendFile(__dirname+"/notnotify.svg");
 })
 
 var online=0;

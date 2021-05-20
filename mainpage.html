@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>VideoChat app</title>
+</head>
+
+<script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+
+<script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+
+<style type="text/css">
+	:root{
+		--theme-color: dodgerblue;
+		--theme-offset: white;
+	}
+	body{
+		margin: 0;
+	}
+	*{
+		transition: 0.5s ease-in-out;
+	}
+	header{
+		font-size: 2em;
+		font-family: sans-serif;
+		font-weight: bold;
+		padding: 0.5em;
+	}
+	#main{
+		position: relative;
+		display: flex;
+		justify-content: space-between;
+	}
+	#videochannel{
+		width: 70%;
+		display: inline-flex;
+		justify-content: space-around;
+		flex-wrap: wrap;
+		align-items: flex-start;
+	}
+	.videocontainer{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 400px;
+		max-width: 100%;
+		background-color: var(--theme-color);
+		color: var(--theme-offset);
+		padding: 5px;
+		margin: 5px;
+		box-sizing: border-box;
+	}
+	.videocontainer .videotitle{
+		width: 100%;
+		text-align: center;
+	}
+	video{
+		width: 100%;
+	}
+	#toast{
+		position: fixed;
+		top: 0.5em;
+		left: 50%;
+		transform: translateX(-50%);
+		display: none;
+		background-color: var(--theme-color);
+		color: var(--theme-offset);
+		border-radius: 10px;
+		padding: 5px;
+		text-align: center;
+		max-width: 90%;
+		width: 400px;
+		min-width: 50%;
+		opacity: 0.7;
+	}
+	#chatchannel{
+		position: sticky;
+		top: 0;
+		display: inline-block;
+		width: 30%;
+		background-color: #ccc;
+	}
+	#chatstream{
+		display: flex;
+		flex-direction: column;
+		padding: 0.5em;
+		box-sizing: border-box;
+		overflow-y: auto;
+		word-break: break-word;
+	}
+	#chatstream .chat{
+		display: inline-flex;
+		flex-direction: column;
+		max-width: 70%;
+		margin: 5px 0;
+	}
+	#chatstream .message{
+		color: white;
+		border-radius: 10px;
+		padding: 5px;
+		box-shadow: 0 0 0 2px white;
+	}
+	#chatstream .me{
+		align-self: flex-start;
+		align-items: flex-start;
+	}
+	#chatstream .memessage{
+		background-color: green;
+		border-bottom-left-radius: 0;
+	}
+	#chatstream .other{
+		align-self: flex-end;
+		align-items: flex-end;
+	}
+	#chatstream .othermessage{
+		background-color: dodgerblue;
+		border-bottom-right-radius: 0;
+	}
+	#chatstream .chat .time{
+		font-size: 0.7em;
+		padding: 5px 0;
+	}
+	#chatstream .chat .metime{
+		align-self: flex-start;
+	}
+	#chatstream .chat .othertime{
+		align-self: flex-end;
+	}
+	#chatbox{
+		display: flex;
+		box-sizing: border-box;
+		width: 100%;
+		justify-content: space-evenly;
+		align-items: center;
+		flex-wrap: wrap;
+		padding: 0.5em;
+	}
+	#chatbox input[type=text]{
+		box-sizing: border-box;
+		max-width: 100%;
+		border-radius: 10px;
+		padding: 5px;
+		border-color: #ccc;
+	}
+	#chatbox input[type=text]:focus{
+		outline: none;
+	}
+	#chatbox #sendbutton{
+		border: none;
+		background-color: green;
+		color: white;
+		padding: 5px;
+	}
+	#chatbox #sendbutton:focus{
+		outline: none;
+		box-shadow: 0 0 5px black;
+	}
+	#online{
+		position: fixed;
+		top: 0.5em;
+		right: 0.5em;
+		background-color: black;
+		color: white;
+		padding: 5px;
+	}
+	#peerid{
+		position: fixed;
+		bottom: 0.5em;
+		left: 0.5em;
+		background-color: black;
+		color: white;
+		padding: 5px;
+	}
+</style>
+
+<body onresize="setheight()">
+	<header>
+		VideoChat App
+	</header>
+	<div id="main">
+		<div id="videochannel">
+			<div class="videocontainer" v-for="(data,index) in videochannel">
+				<div class="videotitle">{{ data.peerid }}</div>
+				<video :src-object.prop.camel="data.stream" :id="data.peerid" :muted="data.muted" controls autoplay></video>
+			</div>
+			<div id="peerid">{{ peerid }}</div>
+		</div>
+		<div id="chatchannel">
+			<div id="chatstream">
+				<div class="chat" v-for="(data,index) in chatchannel" :class="{me: data.peerid==peerid,other: data.peerid!=peerid}">
+					<div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}" v-if="index==0||chatchannel[index-1].peerid!=data.peerid">{{ data.peerid }}
+					</div>
+					<div class="message" :class="{memessage: data.peerid==peerid,othermessage: data.peerid!=peerid}">
+						{{ data.message }}
+						<div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}">
+							{{ data.time }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="chatbox">
+				<img v-if="messagenotify" src="notify_icon" @click="togglemessagenotify()" title="Notification Tone turned on.">
+				<img v-else src="notnotify_icon" @click="togglemessagenotify()" title="Notification Tone turned off.">
+				<input type="text" placeholder="Type a message..." v-model="message" @keyup.enter="sendmessage()">
+				<button id="sendbutton" @click="sendmessage()">Send</button>
+			</div>
+		</div>
+	</div>
+	<div id="toast"></div>
+	<div id="online"></div>
+</body>
+
+<script type="text/javascript">
+	const socket = io();
+	const peer = new Peer(undefined,{
+		host: "/",
+		port: 9000,
+		path: "/"
+	});
+
+	const main = new Vue({
+		el: "#main",
+		data: {
+			peerid: null,
+			temptimer: null,
+			videochannel: [],
+			message: "",
+			messagenotify: true,
+			chatchannel: []
+		},
+		methods: {
+			toast(message){
+				clearInterval(this.temptimer);
+				let temp = document.querySelector("#toast");
+				temp.innerHTML=message;
+				temp.style.display="block";
+				this.temptimer = setInterval(()=>{
+					temp.style.display="none";
+				},3000);
+			},
+			online(online){
+				let temp = document.querySelector("#online");
+				temp.innerHTML=`Online: ${online}`;
+			},
+			addVideoChannel(peerid,stream,muted){
+				this.videochannel.push({peerid,stream,muted});
+				this.removeduplicates();
+			},
+			removeduplicates(){
+				let tempchannel = [];
+				for(let i=0;i<this.videochannel.length;i++){
+					let tag = true;
+					for(let j=0;j<tempchannel.length;j++){
+						if(this.videochannel[i].peerid==tempchannel[j].peerid)
+							tag=false;
+					}
+					if(tag == true)
+						tempchannel.push(this.videochannel[i]);
+				}
+				this.videochannel = tempchannel;
+			},
+			removeVideoChannel(peerid){
+				for(let i=0;i<this.videochannel.length;i++)
+				{
+					if(this.videochannel[i].peerid==peerid)
+					{
+						this.videochannel=this.videochannel.splice(i-1,1);
+						i--;
+					}
+				}
+			},
+			connectToPeer(peerid,stream){
+				console.log(`connectToPeer reached\npeerid: ${peerid}\nstream: ${stream}\nselfpeerid: ${this.peerid}`);
+
+				peer.connect(peerid);
+				
+				let call = peer.call(peerid,stream);
+				call.on("stream",(sentstream)=>{
+					console.log("stream recieved");
+					this.addVideoChannel(peerid,sentstream,false);
+				});
+				call.on("close",()=>{
+					this.removeVideoChannel(peerid);
+				});
+			},
+			chatRecieve(chat){
+				this.chatchannel.push(chat);
+				if(this.messagenotify){
+					let audio = document.createElement("audio");
+					audio.src = "message";
+					audio.play();
+					audio.remove();
+				}
+			},
+			togglemessagenotify(){
+				if(this.messagenotify)
+					this.messagenotify = false;
+				else
+					this.messagenotify = true;
+			},
+			sendmessage(){
+				if(this.message||this.message.length>0)
+				{
+					socket.emit("message",{peerid: this.peerid,message: this.message});
+				}
+			},
+			getusermedia(stream){
+				this.addVideoChannel(this.peerid,stream,true);
+
+				let temppeerid;
+
+				peer.on("connection",(data)=>{
+					temppeerid=data.peer;
+				})
+
+				peer.on("call",call=>{
+					call.answer(stream);
+					call.on("stream",(reqstream)=>{
+						this.addVideoChannel(temppeerid,reqstream,false);
+					})
+				});
+
+				socket.on("peerconnected",({online,peerid})=>{
+					this.toast(`${peerid} connected.`);
+					this.online(online);
+					this.connectToPeer(peerid,stream);
+				});
+			}
+		},
+		beforeMount(){
+			peer.on("open",(id)=>{
+				this.peerid = id;
+				socket.emit("connected",id);
+				navigator.mediaDevices.getUserMedia({
+					video: true,
+					audio: true
+				})
+				.then((stream)=>{
+					this.getusermedia(stream);
+				})
+				.catch((error)=>{
+					console.log(error);
+					navigator.mediaDevices.getUserMedia({
+						video: false,
+						audio: true
+					})
+					.then((stream)=>{
+						this.getusermedia(stream);
+					})
+					.catch((error)=>{
+						console.log(error);
+					})
+				});
+			});
+
+			socket.on("connected",({online,message})=>{
+				this.online(online);
+				console.log(message);
+			});
+
+			socket.on("peerdisconnected",({online,peerid})=>{
+				this.toast(`${peerid} disconnected.`);
+				this.online(online);
+				this.removeVideoChannel(peerid);
+			});
+
+			socket.on("message",(chat)=>{
+				this.chatRecieve(chat);
+			});
+
+		}
+	})
+
+	function setheight(){
+		let chatchannel = document.documentElement.clientHeight-document.querySelector("header").offsetHeight;
+		document.querySelector("#chatchannel").style.height=chatchannel+"px";
+		let chatbox = chatchannel-document.querySelector("#chatbox").offsetHeight;
+		document.querySelector("#chatstream").style.height=chatbox+"px";
+	}
+	setheight();
+
+</script>
+
+</html>

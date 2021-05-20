@@ -17,6 +17,10 @@ server.listen(port,()=>{
 const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure: true});
 app.use(peerServer);
 
+app.get("/",(req,res)=>{
+	res.sendFile(__dirname+"/main.js");
+})
+
 app.get("/message_tone",(req,res)=>{
 	res.sendFile(__dirname+"/incoming_message.mp3");
 })

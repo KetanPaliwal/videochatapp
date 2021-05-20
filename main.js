@@ -14,7 +14,7 @@ server.listen(port,()=>{
 	console.log(`Listening on port ${port}.`);
 })
 
-const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs"});
+const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure: true});
 app.use(peerServer);
 
 app.get("/message_tone",(req,res)=>{

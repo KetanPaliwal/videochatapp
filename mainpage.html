@@ -75,11 +75,13 @@
 		min-width: 50%;
 		opacity: 0.7;
 	}
+	#chatchannelcontainer{
+		display: inline-block;
+		width: 30%;
+	}
 	#chatchannel{
 		position: sticky;
 		bottom: 0;
-		display: inline-block;
-		width: 30%;
 		background-color: #ccc;
 	}
 	#chatstream{
@@ -187,7 +189,7 @@
 			</div>
 			<div id="peerid">{{ peerid }}</div>
 		</div>
-		<div>
+		<div id="chatchannelcontainer">
 			<div id="chatchannel">
 				<div id="chatstream">
 					<div class="chat" v-for="(data,index) in chatchannel" :class="{me: data.peerid==peerid,other: data.peerid!=peerid}">

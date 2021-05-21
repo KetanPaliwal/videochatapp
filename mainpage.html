@@ -333,8 +333,7 @@
 			peer.on("open",(id)=>{
 				this.peerid = id;
 				socket.emit("connected",id);
-				let mediadevice = navigator.mediaDevices.getUserMedia||navigator.mediaDevices.webkitGetUserMedia||navigator.mediaDevices.mozGetUserMedia;
-				mediadevice.call(navigator,{
+				navigator.mediaDevices.getUserMedia({
 					video: true,
 					audio: true
 				})
@@ -343,7 +342,7 @@
 				})
 				.catch((error)=>{
 					console.log(error);
-					mediadevice.call(navigator,{
+					navigator.mediadevices.getUserMedia({
 						video: false,
 						audio: true
 					})

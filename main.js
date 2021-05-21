@@ -1,5 +1,5 @@
 
-const { ExpressPeerServer } = require('peer');
+const { PeerServer } = require('peer');
 
 const express = require("express");
 const app = express();
@@ -14,7 +14,7 @@ server.listen(port,()=>{
 	console.log(`Listening on port ${port}.`);
 })
 
-const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs",secure: true});
+const peerServer = PeerServer({port: port,debug: true,path: "/peerjs"});
 app.use(peerServer);
 
 app.get("/",(req,res)=>{

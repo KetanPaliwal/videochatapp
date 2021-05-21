@@ -1,6 +1,4 @@
 
-//const { ExpressPeerServer } = require('peer');
-
 const express = require("express");
 const app = express();
 
@@ -13,9 +11,6 @@ port = process.env.PORT || 3000;
 server.listen(port,()=>{
 	console.log(`Listening on port ${port}.`);
 })
-
-//const peerServer = ExpressPeerServer(server,{debug: true,path: "/peerjs"});
-//app.use(peerServer);
 
 app.get("/",(req,res)=>{
 	res.sendFile(__dirname+"/mainpage.html");

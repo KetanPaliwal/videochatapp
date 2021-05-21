@@ -187,24 +187,26 @@
 			</div>
 			<div id="peerid">{{ peerid }}</div>
 		</div>
-		<div id="chatchannel">
-			<div id="chatstream">
-				<div class="chat" v-for="(data,index) in chatchannel" :class="{me: data.peerid==peerid,other: data.peerid!=peerid}">
-					<div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}" v-if="index==0||chatchannel[index-1].peerid!=data.peerid">{{ data.peerid }}
-					</div>
-					<div class="message" :class="{memessage: data.peerid==peerid,othermessage: data.peerid!=peerid}">
-						{{ data.message }}
-						<div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}">
-							{{ data.time }}
+		<div>
+			<div id="chatchannel">
+				<div id="chatstream">
+					<div class="chat" v-for="(data,index) in chatchannel" :class="{me: data.peerid==peerid,other: data.peerid!=peerid}">
+						<div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}" v-if="index==0||chatchannel[index-1].peerid!=data.peerid">{{ data.peerid }}
+						</div>
+						<div class="message" :class="{memessage: data.peerid==peerid,othermessage: data.peerid!=peerid}">
+							{{ data.message }}
+							<div class="time" :class="{metime: data.peerid==peerid,othertime: data.peerid!=peerid}">
+								{{ data.time }}
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div id="chatbox">
-				<img v-if="messagenotify" src="notify_icon" @click="togglemessagenotify()" title="Notification Tone turned on.">
-				<img v-else src="notnotify_icon" @click="togglemessagenotify()" title="Notification Tone turned off.">
-				<input type="text" placeholder="Type a message..." v-model="message" @keyup.enter="sendmessage()">
-				<button id="sendbutton" @click="sendmessage()">Send</button>
+				<div id="chatbox">
+					<img v-if="messagenotify" src="notify_icon" @click="togglemessagenotify()" title="Notification Tone turned on.">
+					<img v-else src="notnotify_icon" @click="togglemessagenotify()" title="Notification Tone turned off.">
+					<input type="text" placeholder="Type a message..." v-model="message" @keyup.enter="sendmessage()">
+					<button id="sendbutton" @click="sendmessage()">Send</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -306,6 +308,7 @@
 				{
 					socket.emit("message",{peerid: this.peerid,message: this.message});
 				}
+				this.message="";
 			},
 			getusermedia(stream){
 				this.addVideoChannel(this.peerid,stream,true);

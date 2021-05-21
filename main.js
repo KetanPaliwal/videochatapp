@@ -16,6 +16,10 @@ app.get("/",(req,res)=>{
 	res.sendFile(__dirname+"/mainpage.html");
 })
 
+app.get("/favicon.ico",(req,res)=>{
+	res.sendFile(__dirname+"/favicon.ico");
+})
+
 app.get("/message_tone",(req,res)=>{
 	res.sendFile(__dirname+"/incoming_message.mp3");
 })

@@ -333,7 +333,8 @@
 			peer.on("open",(id)=>{
 				this.peerid = id;
 				socket.emit("connected",id);
-				navigator.mediaDevices.getUserMedia({
+				let mediadevice = navigator.mediaDevices.getUserMedia||navigator.mediaDevices.webkitGetUserMedia||navigator.mediaDevices.mozGetUserMedia;
+				mediadevice.call(navigator,{
 					video: true,
 					audio: true
 				})
@@ -342,7 +343,7 @@
 				})
 				.catch((error)=>{
 					console.log(error);
-					navigator.mediaDevices.getUserMedia({
+					mediadevice.call(navigator,{
 						video: false,
 						audio: true
 					})
@@ -351,7 +352,7 @@
 					})
 					.catch((error)=>{
 						console.log(error);
-					})
+					});
 				});
 			});
 

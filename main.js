@@ -12,12 +12,10 @@ server.listen(port,()=>{
 	console.log(`Listening on port ${port}.`);
 })
 
+app.use(express.favicon("/favicon.ico"));
+
 app.get("/",(req,res)=>{
 	res.sendFile(__dirname+"/mainpage.html");
-})
-
-app.get("/favicon.ico",(req,res)=>{
-	res.sendFile(__dirname+"/favicon.ico");
 })
 
 app.get("/message_tone",(req,res)=>{

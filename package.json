@@ -1,11 +1,10 @@
 {
   "name": "videochatapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "Video Chat App",
   "main": "main.js",
   "dependencies": {
     "express": "^4.17.1",
-    "peer": "^0.6.1",
     "socket.io": "^4.1.2"
   },
   "devDependencies": {},
@@ -13,6 +12,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node main.js"
   },
-  "author": "",
+  "author": "Ketan Paliwal",
   "license": "ISC"
 }

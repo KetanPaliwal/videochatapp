@@ -318,18 +318,16 @@
 			getusermedia(stream){
 				this.addVideoChannel(this.peerid,stream,true);
 
-				let temppeerid;
-
 				peer.on("connection",(data)=>{
-					temppeerid=data.peer;
+					peer.on("call",call=>{
+						call.answer(stream);
+						call.on("stream",(reqstream)=>{
+							this.addVideoChannel(data.peer,reqstream,false);
+						})
+					});
 				})
 
-				peer.on("call",call=>{
-					call.answer(stream);
-					call.on("stream",(reqstream)=>{
-						this.addVideoChannel(temppeerid,reqstream,false);
-					})
-				});
+				
 
 				socket.on("peerconnected",({online,peerid})=>{
 					this.toast(`${peerid} connected.`);
@@ -379,6 +377,9 @@
 				this.chatRecieve(chat);
 			});
 
+		},
+		updated(){
+			setheight();
 		}
 	})
 
@@ -388,7 +389,6 @@
 		let chatbox = chatchannel-document.querySelector("#chatbox").offsetHeight;
 		document.querySelector("#chatstream").style.height=chatbox+"px";
 	}
-	setheight();
 
 </script>
 

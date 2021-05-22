@@ -317,15 +317,15 @@
 				this.addVideoChannel(this.peerid,stream,true);
 
 				peer.on("connection",(data)=>{
+					
 					peer.on("call",call=>{
 						call.answer(stream);
 						call.on("stream",(reqstream)=>{
 							this.addVideoChannel(data.peer,reqstream,false);
 						})
 					});
+					
 				})
-
-				
 
 				socket.on("peerconnected",({online,peerid})=>{
 					this.toast(`${peerid} connected.`);
@@ -338,7 +338,8 @@
 			peer.on("open",(id)=>{
 				this.peerid = id;
 				socket.emit("connected",id);
-				navigator.mediaDevices.getUserMedia({
+				let mediadevice = navigator.mediaDevices.getUserMedia||navigator.mediaDevices.webkitGetUserMedia||navigator.mediaDevices.mozGetUserMedia;
+				mediadevice.call(navigator,{
 					video: true,
 					audio: true
 				})
@@ -347,7 +348,7 @@
 				})
 				.catch((error)=>{
 					console.log(error);
-					navigator.mediaDevices.getUserMedia({
+					mediadevice.call(navigator,{
 						video: false,
 						audio: true
 					})
@@ -356,7 +357,7 @@
 					})
 					.catch((error)=>{
 						console.log(error);
-					});
+					})
 				});
 			});
 

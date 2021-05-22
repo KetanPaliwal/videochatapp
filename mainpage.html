@@ -274,14 +274,12 @@
 				{
 					if(this.videochannel[i].peerid==peerid)
 					{
-						this.videochannel=this.videochannel.splice(i-1,1);
-						break;
+						this.videochannel.splice(i,1);
+						i--;
 					}
 				}
 			},
 			connectToPeer(peerid,stream){
-				console.log(`connectToPeer reached\npeerid: ${peerid}\nstream: ${stream}\nselfpeerid: ${this.peerid}`);
-
 				peer.connect(peerid);
 				
 				let call = peer.call(peerid,stream);
